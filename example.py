@@ -1,8 +1,11 @@
 import databasecontroller
 
 dbcontroll = databasecontroller.databasecontroller(caminho="arquivo.json")
-#try:
+# try:
 dbcontroll.load()
-dbcontroll.save()
-#except:
-    #dbcontroll.makeDatabase()
+document = dbcontroll.getDocument("Teste2")
+document.remove("Cafe")
+print(document.get()['Suco'])
+# dbcontroll.save()
+# except:
+# dbcontroll.makeDatabase()

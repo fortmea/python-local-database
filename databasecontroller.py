@@ -29,9 +29,11 @@ class databaseDocument:
 
 
 class databasecontroller:
-    from databasecontroller import databaseDocument
     __path = ""
     __docs = {}
+
+    def getDocument(self, name):
+        return self.__docs[name]
 
     def __init__(self, caminho):
         self.__path = caminho
@@ -53,20 +55,20 @@ class databasecontroller:
             # print(self.__data)
             if(data):
                 self.generateDocuments(data)
-            for x in self.__docs:
-                print(self.__docs[x].getName())
+#            for x in self.__docs:
+#                print(self.__docs[x].getName())
         except:
             raise Exception(
                 "Arquivo não encontrado ou corrompido-> "+self.__path)
 
     def save(self):
-        #print(self.__docs)
+        # print(self.__docs)
         try:
             fs = open(self.__path, "w+")
             fs.write('{')
             for x in self.__docs:
-                #print(x)
-                #print(self.__docs[x])
+                # print(x)
+                # print(self.__docs[x])
                 fs.write('"'+x+'":"'+self.__docs[x].get()+'"')
             fs.write('}')
             fs.close()
