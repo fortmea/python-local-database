@@ -1,1 +1,8 @@
-{"Teste":"Propriedade", "Teste2":{"Cafe":"Com Acucar", "Suco":"Laranja"}}
+{
+    "Teste": "Propriedade",
+    "Teste2": {
+        "Cafe": "Com Acucar",
+        "Suco": "Laranja",
+        "Camisa": "Azul"
+    }
+}

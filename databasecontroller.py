@@ -1,14 +1,45 @@
 
 import json
+import hashlib
+
+
+class item():
+    __data = {}
+    __name = ""
+
+    def getName(self):
+        return self.__name
+
+    def get(self):
+        return self.__data
+
+    def __init__(self, data, name):
+        self.__data = data
+        self.__name = name
+
+    def hash():
+        # Todo: Implement hash function
+        return 0
 
 
 class databaseDocument:
     __name = ""
     __data = {}
 
+    def __getWritable__(self):
+        writable = ''
+        for x in self.__data:
+            writable += self.__data
+
     def __init__(self, data, name):
         self.__data = data
         self.__name = name
+
+    def insertItem(self, name, data):
+        self.__data[name] = item(data, name)
+
+    def insertProperty(self, name, data):
+        self.__data[name] = data
 
     def getName(self):
         return self.__name
@@ -22,10 +53,8 @@ class databaseDocument:
     def get(self):
         return self.__data
 
-    class item(super):
-        def hash():
-            # Todo: Implement hash function
-            return 0
+    def getHash(self):
+        return hashlib.md5((str(self.getName()+str(self.get()))).encode('utf-8')).hexdigest()
 
 
 class databasecontroller:
@@ -52,24 +81,23 @@ class databasecontroller:
             data = json.loads(fs.read())
             fs.close()
             print("Arquivo carregado com sucesso!")
-            # print(self.__data)
             if(data):
                 self.generateDocuments(data)
-#            for x in self.__docs:
-#                print(self.__docs[x].getName())
         except:
             raise Exception(
                 "Arquivo não encontrado ou corrompido-> "+self.__path)
 
     def save(self):
-        # print(self.__docs)
         try:
+            pos = 1
             fs = open(self.__path, "w+")
             fs.write('{')
             for x in self.__docs:
-                # print(x)
-                # print(self.__docs[x])
-                fs.write('"'+x+'":"'+self.__docs[x].get()+'"')
+                if(pos != len(self.__docs.keys())):
+                    fs.write('"'+x+'":'+json.dumps(self.__docs[x].get())+',')
+                else:
+                    fs.write('"'+x+'":'+json.dumps(self.__docs[x].get()))
+                pos += 1
             fs.write('}')
             fs.close()
         except:
