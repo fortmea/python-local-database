@@ -13,6 +13,9 @@ class item():
     def get(self):
         return self.__data
 
+    def setData(self, data):
+        self.__data = data
+
     def __init__(self, data, name):
         self.__data = data
         self.__name = name
@@ -21,9 +24,7 @@ class item():
         return 0
 
 
-class databaseDocument:
-    __name = ""
-    __data = {}
+class databaseDocument(object):
 
     def __dictKeysToList__(self, dict):
         _lista = []
@@ -35,7 +36,8 @@ class databaseDocument:
     def __dictToList__(self, dict):
         _lista = []
         for x in dict:
-            _lista.append(dict[x])
+            if(type(dict[x]) == str):
+                _lista.append(dict[x].getName())
         _lista.sort()
         return _lista
 
@@ -52,21 +54,23 @@ class databaseDocument:
             return 0
 
     def __doKeyBinarySearch__(self, value):
-        return 0 != self.binarySearch(self.__dictKeysToList__(self.__data), value)
+        if(len(self.__data) > 1):
+            return 0 != self.binarySearch(self.__dictKeysToList__(self.__data), value)
+        else:
+            print("A document must be bigger than 1 item to be searchable.")
 
     def __doValueBinarySearch__(self, value):
-        return 0 != self.binarySearch(self.__dictToList__(self.__data), value)
+        if(len(self.__data) > 1):
+            return 0 != self.binarySearch(self.__dictToList__(self.__data), value)
+        else:
+            print("A document must be bigger than 1 item to be searchable.")
 
-    def __getWritable__(self):
-        writable = ''
-        for x in self.__data:
-            writable += self.__data
 
     def __init__(self, data, name):
         self.__data = data
         self.__name = name
 
-    def insertItem(self, name, data):
+    def insertItem(self, name: str, data: dict):
         self.__data[name] = item(data, name)
 
     def insertProperty(self, name, data):
@@ -75,10 +79,11 @@ class databaseDocument:
     def getName(self):
         return self.__name
 
-    def containsKey(self, name):
+    def containsKey(self, name) -> bool:
         return self.__doKeyBinarySearch__(name)
 
-    def containsValue(self, name):
+    def containsValue(self, name) -> bool:
+        """Return true if a string is found in any of the documents."""
         return self.__doValueBinarySearch__(name)
 
     def set(self, property, data):
@@ -87,13 +92,16 @@ class databaseDocument:
     def remove(self, property):
         self.__data.pop(property)
 
-    def get(self):
+    def get(self) -> dict:
         return self.__data
 
-    def getItem(self, name):
-        return self.__data[name]
+    def getItem(self, name) -> item:
+        try:
+            return self.__data[name]
+        except:
+            return item({"Err": True}, "Err")
 
-    def getHash(self):
+    def getHash(self) -> hashlib.md5:
         return hashlib.md5((str(self.getName()+str(self.get()))).encode('utf-8')).hexdigest()
 
 
@@ -101,8 +109,23 @@ class databasecontroller:
     __path = ""
     __docs = {}
 
+    def serialize(obj):
+        """JSON serializer for objects not serializable by default json code"""
+
+        if isinstance(obj, databaseDocument):
+            serial = obj.get()
+            return serial
+
+        if isinstance(obj, item):
+            serial = obj.get()
+            return serial
+
+        return obj.__dict__
     def getDocument(self, name) -> databaseDocument:
-        return self.__docs[name]
+        try:
+            return self.__docs[name]
+        except:
+            return False    
 
     def __init__(self, caminho):
         self.__path = caminho
@@ -124,7 +147,7 @@ class databasecontroller:
                 if(self.__docs[x].get()[field] == value):
                     return self.__docs[x]
         except:
-            print("boy")
+            return False
 
     def load(self):
         try:
@@ -138,18 +161,31 @@ class databasecontroller:
             raise Exception(
                 "Arquivo não encontrado ou corrompido-> "+self.__path)
 
+    def nsave(self):
+        try:
+            data = self.__docs
+            for x in data:
+                for y in data[x].get():
+                    print(x+":"+y+":" + data[x].get()[y].get())
+        except:
+            raise Exception("Erro salvando arquivo -> "+self.__path)
+
     def save(self):
+
         try:
             pos = 1
             fs = open(self.__path, "w+")
             fs.write('{')
             for x in self.__docs:
+                data = self.__docs[x]
                 if(pos != len(self.__docs.keys())):
-                    fs.write('"'+x+'":'+json.dumps(self.__docs[x].get())+',')
+                    fs.write(
+                        '"'+x+'":'+json.dumps(data, default=databasecontroller.serialize)+',')
                 else:
-                    fs.write('"'+x+'":'+json.dumps(self.__docs[x].get()))
+                    fs.write(
+                        '"'+x+'":'+json.dumps(data, default=databasecontroller.serialize))
                 pos += 1
             fs.write('}')
             fs.close()
         except:
-            raise Exception("Arquivo não encontrado -> "+self.__path)
+            raise Exception("Erro salvando arquivo -> "+self.__path)
