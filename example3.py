@@ -5,9 +5,9 @@ try:
 except:
     dbcontroll.makeDatabase()
 
-dbcontroll.insertDocument({}, "Obj1")
+#dbcontroll.insertDocument({}, "Obj1")
 documento = dbcontroll.getDocument("Obj1")
-documento.insertItem("Obj2", {"Cor":"Azul"})
-print(documento.getItem("Obj2").get())
+documento.insertItem("Obj4", {"Cor":input("Informe uma cor: ")})
+print(documento.getItem("Obj4").get())
 
 dbcontroll.save()

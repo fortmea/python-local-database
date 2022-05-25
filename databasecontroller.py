@@ -72,9 +72,6 @@ class databaseDocument(object):
     def insertItem(self, name: str, data: dict):
         self.__data[name] = item(data, name)
 
-    def insertProperty(self, name, data):
-        self.__data[name] = data
-
     def getName(self):
         return self.__name
 
@@ -120,8 +117,13 @@ class databasecontroller:
             return serial
 
         return obj.__dict__
-
-    def getDocument(self, name) -> databaseDocument:
+    def documentExists(self, name) -> bool:
+        try:
+            data = self.__docs[name]
+            return True
+        except:
+            return False
+    def getDocument(self, name: str) -> databaseDocument:
         try:
             return self.__docs[name]
         except:
@@ -138,14 +140,20 @@ class databasecontroller:
         for x in data:
             self.__docs[x] = databaseDocument({}, x)
             try:
-                for y in x:
-                    x.insertItem(y, x[y])
+                for y in data[x]:
+                    self.__docs[x].insertItem(y, data[x][y])
             except:
-                pass
+                raise Exception("Error generating itens for document: " + data[x])
 
     def insertDocument(self, content, name):
-        self.__docs[name] = databaseDocument(content, name)
-
+        if(self.documentExists(name) == False):
+            data = {}
+            print(content)
+            for x in content:
+                data[x] = item(content[x], x)
+            self.__docs[name] = databaseDocument(data, name)
+        else:
+            raise Exception("Error generating document: "+ name + ". document already exists or content couldn't be appended to instances of Item.")
     def getWhere(self, field, value) -> databaseDocument:
         try:
             for x in self.__docs:
@@ -167,7 +175,6 @@ class databasecontroller:
                 "Arquivo não encontrado ou corrompido-> "+self.__path)
 
     def save(self):
-
         try:
             pos = 1
             fs = open(self.__path, "w+")
