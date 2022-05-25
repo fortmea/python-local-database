@@ -15,9 +15,10 @@ print(document.getHash())
 #print(document.containsValue("Valor"))
 document.insertItem(
     "NovoDocumento", databasecontroller.item({}, "NovoDocumento"))
-print(type(document.get().get("NovoDocumento")))
-documento2 = document.get().get("NovoDocumento")
-documento2.setData({"Cuzinho": "Daora"})
+#print(type(document.get().get("NovoDocumento")))
+documento2 = document.getItem("NovoDocumento")
+#documento2.insertItem({"Cafezinho": "Daora"})
+print(documento2)
 dbcontroll.save()
 # except:
 # dbcontroll.makeDatabase()

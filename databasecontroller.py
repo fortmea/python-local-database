@@ -65,7 +65,6 @@ class databaseDocument(object):
         else:
             print("A document must be bigger than 1 item to be searchable.")
 
-
     def __init__(self, data, name):
         self.__data = data
         self.__name = name
@@ -102,7 +101,7 @@ class databaseDocument(object):
             return item({"Err": True}, "Err")
 
     def getHash(self) -> hashlib.md5:
-        return hashlib.md5((str(self.getName()+str(self.get()))).encode('utf-8')).hexdigest()
+        return hashlib.md5((str(json.dumps(self.get(), default=databasecontroller.serialize))).encode('utf-8')).hexdigest()
 
 
 class databasecontroller:
@@ -121,11 +120,12 @@ class databasecontroller:
             return serial
 
         return obj.__dict__
+
     def getDocument(self, name) -> databaseDocument:
         try:
             return self.__docs[name]
         except:
-            return False    
+            return False
 
     def __init__(self, caminho):
         self.__path = caminho
@@ -136,7 +136,12 @@ class databasecontroller:
 
     def generateDocuments(self, data):
         for x in data:
-            self.__docs[x] = databaseDocument(data[x], x)
+            self.__docs[x] = databaseDocument({}, x)
+            try:
+                for y in x:
+                    x.insertItem(y, x[y])
+            except:
+                pass
 
     def insertDocument(self, content, name):
         self.__docs[name] = databaseDocument(content, name)
@@ -160,15 +165,6 @@ class databasecontroller:
         except:
             raise Exception(
                 "Arquivo não encontrado ou corrompido-> "+self.__path)
-
-    def nsave(self):
-        try:
-            data = self.__docs
-            for x in data:
-                for y in data[x].get():
-                    print(x+":"+y+":" + data[x].get()[y].get())
-        except:
-            raise Exception("Erro salvando arquivo -> "+self.__path)
 
     def save(self):
 
