@@ -10,6 +10,8 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install Python 
 pip install pylocaldatabase
 ```
 
+Release history and file downloads can be found [on the project's pypi page](https://pypi.org/project/pylocaldatabase/).
+
 ## Usage
 
 ```python
