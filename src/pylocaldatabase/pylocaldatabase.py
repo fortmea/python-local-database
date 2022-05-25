@@ -129,8 +129,8 @@ class databasecontroller:
         except:
             return False
 
-    def __init__(self, caminho):
-        self.__path = caminho
+    def __init__(self, path):
+        self.__path = path
 
     def makeDatabase(self):
         fs = open(self.__path, "w+")
