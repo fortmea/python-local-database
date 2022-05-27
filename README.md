@@ -15,7 +15,10 @@ Release history and file downloads can be found [on the project's pypi page](htt
 ## Usage
 
 ```python
+
+# import library
 from pylocaldatabase import pylocaldatabase
+
 # define database file and assign databasecontroller instance to var dbcontroll
 dbcontroll = pylocaldatabase.databasecontroller(path="file.json")
 
@@ -25,21 +28,36 @@ dbcontroll.load()
 # create database file 'file.json'
 dbcontroll.makeDatabase()
 
-# create document 
+# creating document 
 dbcontroll.insertDocument({}, "documentName")
 
-# assign the document we created
+# assigning document to a var
 document = dbcontroll.getDocument("documentName")
 
-# insert Item to the document
+# inserting Item in the document
 document.insertItem("ItemName", {"Property":"Property Value"})
 
-# read Item data
+# reading Item data
 itemData = document.getItem("ItemName").get()
+
+# assigning item to var
+item = document.getItem("ItemName")
+
+# inserting new property in Item
+item.insertProperty("Property Name", "Property Value")
+
+# removing property from item
+item.removeProperty("Property Name")
+
+# removing item from document 
+
+document.removeItem("ItemName")
 
 # save data 
 dbcontroll.save()
 ```
+## Examples
+Examples can be found [here](https://github.com/fortmea/python-local-database/tree/main/examples).
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

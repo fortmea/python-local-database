@@ -22,6 +22,9 @@ class item():
 
     def insertProperty(self, name, value):
         self.__data[name] = value
+        
+    def removeProperty(self, name):
+        self.__data.pop(name)
 
     def hash(self):
         return databaseDocument.getHash(self)
@@ -88,7 +91,7 @@ class databaseDocument(object):
     def set(self, property, data):
         self.__data[property] = data
 
-    def remove(self, property):
+    def removeItem(self, property):
         self.__data.pop(property)
 
     def get(self) -> dict:

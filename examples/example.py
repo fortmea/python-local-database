@@ -27,17 +27,25 @@ document.insertItem("Item1", {"Property": "Value"})
 
 print(document.get())  # printing document contents again
 
-document.remove("Color")  # removing item of name "Color"
+document.removeItem("Color")  # removing item of name "Color"
 
 print(document.getItem('Item1').get())  # printing the contents of item "Item1"
 
 print(document.getHash())  # printing the document's hash
 
 document.insertItem("NewItem", {})  # inserting new item
+
 item1 = document.getItem("NewItem")  # assigning it to variable item1
+
 print(item1.hash())  # printing it's hash
-# inserting new property in item1
-item1.insertProperty("user_name", "João Walter Amadeu")
+
+
+item1.insertProperty("user_name", "João Walter Amadeu") # inserting new property in item1
+
 print(item1.get()["user_name"])  # printing value of the property "user_name"
+
+item1.removeProperty("user_name") # removing property "user_name"
+
+document.removeItem("Item1") # removing item from document
 
 dbcontroll.save()  # saving the operations on the file
