@@ -20,8 +20,11 @@ class item():
         self.__data = data
         self.__name = name
 
-    def hash():
-        return 0
+    def insertProperty(self, name, value):
+        self.__data[name] = value
+
+    def hash(self):
+        return databaseDocument.getHash(self)
 
 
 class databaseDocument(object):
@@ -117,12 +120,14 @@ class databasecontroller:
             return serial
 
         return obj.__dict__
+
     def documentExists(self, name) -> bool:
         try:
             data = self.__docs[name]
             return True
         except:
             return False
+
     def getDocument(self, name: str) -> databaseDocument:
         try:
             return self.__docs[name]
@@ -143,7 +148,8 @@ class databasecontroller:
                 for y in data[x]:
                     self.__docs[x].insertItem(y, data[x][y])
             except:
-                raise Exception("Error generating itens for document: " + data[x])
+                raise Exception(
+                    "Error generating itens for document: " + data[x])
 
     def insertDocument(self, content, name):
         if(self.documentExists(name) == False):
@@ -153,7 +159,9 @@ class databasecontroller:
                 data[x] = item(content[x], x)
             self.__docs[name] = databaseDocument(data, name)
         else:
-            raise Exception("Error generating document: "+ name + ". document already exists or content couldn't be appended to instances of Item.")
+            raise Exception("Error generating document: " + name +
+                            ". document already exists or content couldn't be appended to instances of Item.")
+
     def getWhere(self, field, value) -> databaseDocument:
         try:
             for x in self.__docs:
