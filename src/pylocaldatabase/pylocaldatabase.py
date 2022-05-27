@@ -27,29 +27,29 @@ class item():
 class databaseDocument(object):
 
     def __dictKeysToList__(self, dict):
-        _lista = []
+        _list = []
         for x in dict:
-            _lista.append(x)
-        _lista.sort()
-        return _lista
+            _list.append(x)
+        _list.sort()
+        return _list
 
     def __dictToList__(self, dict):
-        _lista = []
+        _list = []
         for x in dict:
             if(type(dict[x]) == str):
-                _lista.append(dict[x].getName())
-        _lista.sort()
-        return _lista
+                _list.append(dict[x].getName())
+        _list.sort()
+        return _list
 
-    def binarySearch(self, vetor, valor):
-        meio = vetor[len(vetor)//2]
+    def binarySearch(self, array, value):
+        mid = array[len(array)//2]
         try:
-            if meio == valor:
+            if mid == value:
                 return 1
-            elif valor < meio:
-                return self.binarySearch(vetor[:len(vetor)//2], valor)
-            elif valor > meio:
-                return self.binarySearch(vetor[len(vetor)//2:], valor)
+            elif value < mid:
+                return self.binarySearch(array[:len(array)//2], value)
+            elif value > mid:
+                return self.binarySearch(array[len(array)//2:], value)
         except:
             return 0
 
@@ -167,12 +167,11 @@ class databasecontroller:
             fs = open(self.__path)
             data = json.loads(fs.read())
             fs.close()
-            print("Arquivo carregado com sucesso!")
             if(data):
                 self.generateDocuments(data)
         except:
             raise Exception(
-                "Arquivo não encontrado ou corrompido-> "+self.__path)
+                "File not found or corrupted -> "+self.__path)
 
     def save(self):
         try:
@@ -191,4 +190,4 @@ class databasecontroller:
             fs.write('}')
             fs.close()
         except:
-            raise Exception("Erro salvando arquivo -> "+self.__path)
+            raise Exception("Error saving file -> "+self.__path)

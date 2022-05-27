@@ -19,6 +19,9 @@ from pylocaldatabase import pylocaldatabase
 # define database file and assign databasecontroller instance to var dbcontroll
 dbcontroll = pylocaldatabase.databasecontroller(path="file.json")
 
+# load data from file
+dbcontroll.load()
+
 # create database file 'file.json'
 dbcontroll.makeDatabase()
 
@@ -34,6 +37,8 @@ document.insertItem("ItemName", {"Property":"Property Value"})
 # read Item data
 itemData = document.getItem("ItemName").get()
 
+# save data 
+dbcontroll.save()
 ```
 
 ## Contributing
