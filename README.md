@@ -1,16 +1,28 @@
 # Python Local Database
 
+
+
 A python package made to simplify the use of json as a mean to organize and store data in python.
+
+----------
 
 ## Installation
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install Python Local Database.
 
+### Linux/macOS:
 ```bash
 pip install pylocaldatabase
 ```
 
+### Windows:
+```bash
+py -m pip install pylocaldatabase
+```
+
 Release history and file downloads can be found [on the project's pypi page](https://pypi.org/project/pylocaldatabase/).
+
+    ----------
 
 ## Usage
 
@@ -58,6 +70,9 @@ dbcontroll.save()
 ```
 ## Examples
 Examples can be found [here](https://github.com/fortmea/python-local-database/tree/main/examples).
+
+## Cryptography
+An example on how to use the built-in Cryptography functions, you can refer to [Example 2](/examples/example2.py)
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

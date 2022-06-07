@@ -1,11 +1,11 @@
 
 import json
 import hashlib
+from cryptography.fernet import Fernet
+import os
 
 
-class item():
-    __data = {}
-    __name = ""
+class item(object):
 
     def getName(self):
         return self.__name
@@ -22,7 +22,7 @@ class item():
 
     def insertProperty(self, name, value):
         self.__data[name] = value
-        
+
     def removeProperty(self, name):
         self.__data.pop(name)
 
@@ -69,7 +69,11 @@ class databaseDocument(object):
         if(len(self.__data) > 1):
             return 0 != self.binarySearch(self.__dictToList__(self.__data), value)
         else:
-            print("A document must be bigger than 1 item to be searchable.")
+            for x in self.__data:
+                if self.__data[x] == value:
+                    return True
+                else:
+                    return False
 
     def __init__(self, data, name):
         self.__data = data
@@ -101,7 +105,7 @@ class databaseDocument(object):
         try:
             return self.__data[name]
         except:
-            return item({"Err": True}, "Err")
+            return False
 
     def getHash(self) -> hashlib.md5:
         return hashlib.md5((str(json.dumps(self.get(), default=databasecontroller.serialize))).encode('utf-8')).hexdigest()
@@ -109,6 +113,7 @@ class databaseDocument(object):
 
 class databasecontroller:
     __path = ""
+    __encryptedpath = ""
     __docs = {}
 
     def serialize(obj):
@@ -137,14 +142,25 @@ class databasecontroller:
         except:
             return False
 
-    def __init__(self, path):
-        self.__path = path
+    def __init__(self, path, isEncrypted):
+        if(not isEncrypted):
+            self.__path = path
+        else:
+            self.__encryptedpath = path
 
     def makeDatabase(self):
-        fs = open(self.__path, "w+")
-        fs.close()
+        if self.__path == '':
+            fs = open(self.__encryptedpath, "w+")
+            fs.close()
+        else:
+            fs = open(self.__path, "w+")
+            fs.close()
 
     def generateDocuments(self, data):
+        ost = str(data)
+        ost = ost[2:]
+        ost = ost[:len(ost)-1]
+        data = json.loads(ost)
         for x in data:
             self.__docs[x] = databaseDocument({}, x)
             try:
@@ -157,7 +173,6 @@ class databasecontroller:
     def insertDocument(self, content, name):
         if(self.documentExists(name) == False):
             data = {}
-            print(content)
             for x in content:
                 data[x] = item(content[x], x)
             self.__docs[name] = databaseDocument(data, name)
@@ -173,6 +188,21 @@ class databasecontroller:
         except:
             return False
 
+    def decryptLoad(self, keyPath):
+        try:
+            with open(keyPath, 'rb') as filekey:
+                key = filekey.read()
+            fernet = Fernet(key)
+            with open(self.__encryptedpath, 'rb') as enc_file:
+                encrypted = enc_file.read()
+            decrypted = fernet.decrypt(encrypted)
+            if(decrypted):
+                
+                self.generateDocuments(decrypted)
+        except:
+            raise Exception(
+                "File not found or corrupted -> "+self.__encryptedpath)
+
     def load(self):
         try:
             fs = open(self.__path)
@@ -184,21 +214,28 @@ class databasecontroller:
             raise Exception(
                 "File not found or corrupted -> "+self.__path)
 
+    def save_encrypted(self, keyPath):
+        try:
+            data = json.dumps(
+                self.__docs, default=databasecontroller.serialize).encode()
+            with open(keyPath, 'rb') as filekey:
+                key = filekey.read()
+            fernet = Fernet(key)
+            encrypted = fernet.encrypt(data)
+            with open(self.__encryptedpath, 'wb') as encrypted_file:
+                encrypted_file.write(encrypted)
+        except:
+            raise Exception("Error saving file -> "+self.__encryptedpath)
+
+    def generateKey(self, keypath):
+        key = Fernet.generate_key()
+        with open(keypath, 'wb') as filekey:
+            filekey.write(key)
+
     def save(self):
         try:
-            pos = 1
             fs = open(self.__path, "w+")
-            fs.write('{')
-            for x in self.__docs:
-                data = self.__docs[x]
-                if(pos != len(self.__docs.keys())):
-                    fs.write(
-                        '"'+x+'":'+json.dumps(data, default=databasecontroller.serialize)+',')
-                else:
-                    fs.write(
-                        '"'+x+'":'+json.dumps(data, default=databasecontroller.serialize))
-                pos += 1
-            fs.write('}')
+            fs.write(json.dumps(self.__docs, default=databasecontroller.serialize))
             fs.close()
         except:
             raise Exception("Error saving file -> "+self.__path)
