@@ -72,7 +72,7 @@ dbcontroll.save()
 Examples can be found [here](https://github.com/fortmea/python-local-database/tree/main/examples).
 
 ## Cryptography
-An example on how to use the built-in Cryptography functions, you can refer to [Example 2](/examples/example2.py)
+An example on how to use the built-in Cryptography functions, you can refer to [Example 2.](/examples/example2.py)
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
