@@ -157,10 +157,10 @@ class databasecontroller:
             fs.close()
 
     def generateDocuments(self, data):
-        ost = str(data)
-        ost = ost[2:]
-        ost = ost[:len(ost)-1]
-        data = json.loads(ost)
+        #ost = str(data)
+        #ost = ost[2:]
+        #ost = ost[:len(ost)-1]
+        data = json.loads(data)
         for x in data:
             self.__docs[x] = databaseDocument({}, x)
             try:
@@ -198,7 +198,7 @@ class databasecontroller:
             decrypted = fernet.decrypt(encrypted)
             if(decrypted):
                 
-                self.generateDocuments(decrypted)
+                self.generateDocuments(decrypted.decode())
         except:
             raise Exception(
                 "File not found or corrupted -> "+self.__encryptedpath)
