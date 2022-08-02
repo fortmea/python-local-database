@@ -3,7 +3,7 @@
 
 
 A python package made to simplify the use of json as a mean to organize and store data in python.
-
+[![Upload Python Package](https://github.com/fortmea/python-local-database/actions/workflows/python-publish.yml/badge.svg)](https://github.com/fortmea/python-local-database/actions/workflows/python-publish.yml)
 ----------
 
 ## Installation

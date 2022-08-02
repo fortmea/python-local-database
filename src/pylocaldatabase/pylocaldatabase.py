@@ -2,7 +2,6 @@
 import json
 import hashlib
 from cryptography.fernet import Fernet
-import os
 
 
 class item(object):
@@ -62,7 +61,7 @@ class databaseDocument(object):
         return value in self.__dictKeysToList__(self.__data)
 
     def __doValueSearch__(self, value):
-        print (self.__dictToList__(self.__data))
+       # print (self.__dictToList__(self.__data))
         return value in self.__dictToList__(self.__data)
 
     def __init__(self, data, name):
@@ -70,12 +69,15 @@ class databaseDocument(object):
         self.__name = name
 
     def insertItem(self, name: str, data: dict):
+        """Inserts new item object in databaseDocument object, with given key and data"""
         self.__data[name] = item(data, name)
 
     def getName(self):
+        """Returns databaseDocument key"""
         return self.__name
 
     def containsKey(self, name) -> bool:
+        """Returns true if a key with given value is present in document"""
         return self.__doKeySearch__(name)
 
     def containsValue(self, name) -> bool:
@@ -83,15 +85,19 @@ class databaseDocument(object):
         return self.__doValueSearch__(name)
 
     def set(self, property, data):
+        """Sets new value to key"""
         self.__data[property] = data
 
     def removeItem(self, property):
+        """Removes property by key"""
         self.__data.pop(property)
 
     def get(self) -> dict:
+        """Returns the contents of the databaseDocument"""
         return self.__data
 
     def getItem(self, name) -> item:
+        """Returns item by key"""
         try:
             return self.__data[name]
         except:
