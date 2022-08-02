@@ -1,5 +1,5 @@
 # Python Local Database
-
+![Logo Python Local Database](https://github.com/fortmea/python-local-database/images/logo.png)
 
 
 A python package made to simplify the use of json as a mean to organize and store data in python.
