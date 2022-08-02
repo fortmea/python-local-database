@@ -35,45 +35,35 @@ class databaseDocument(object):
     def __dictKeysToList__(self, dict):
         _list = []
         for x in dict:
-            _list.append(x)
-        _list.sort()
+            try:
+                for y in dict[x].get():
+                    _list.append(y)
+            except: 
+                _list.append(x)
         return _list
 
-    def __dictToList__(self, dict):
+    def __dictToList__(self, dict: dict):
         _list = []
         for x in dict:
-            if(type(dict[x]) == str):
-                _list.append(dict[x].getName())
+            try:
+                for y in dict[x].get():
+                    _list.append(dict[x].get()[y])
+            except: 
+                _list.append(dict[x].get())
         _list.sort()
         return _list
+    def __valueSearch__(self, value):
+        found = False
+        for x in self.__data:
+            for y in self.__data[x].get():
+                found =  value in self.__data[x].get()[y]
+        return found
+    def __doKeySearch__(self, value):
+        return value in self.__dictKeysToList__(self.__data)
 
-    def binarySearch(self, array, value):
-        mid = array[len(array)//2]
-        try:
-            if mid == value:
-                return 1
-            elif value < mid:
-                return self.binarySearch(array[:len(array)//2], value)
-            elif value > mid:
-                return self.binarySearch(array[len(array)//2:], value)
-        except:
-            return 0
-
-    def __doKeyBinarySearch__(self, value):
-        if(len(self.__data) > 1):
-            return 0 != self.binarySearch(self.__dictKeysToList__(self.__data), value)
-        else:
-            print("A document must be bigger than 1 item to be searchable.")
-
-    def __doValueBinarySearch__(self, value):
-        if(len(self.__data) > 1):
-            return 0 != self.binarySearch(self.__dictToList__(self.__data), value)
-        else:
-            for x in self.__data:
-                if self.__data[x] == value:
-                    return True
-                else:
-                    return False
+    def __doValueSearch__(self, value):
+        print (self.__dictToList__(self.__data))
+        return value in self.__dictToList__(self.__data)
 
     def __init__(self, data, name):
         self.__data = data
@@ -86,11 +76,11 @@ class databaseDocument(object):
         return self.__name
 
     def containsKey(self, name) -> bool:
-        return self.__doKeyBinarySearch__(name)
+        return self.__doKeySearch__(name)
 
     def containsValue(self, name) -> bool:
         """Return true if a string is found in any of the documents."""
-        return self.__doValueBinarySearch__(name)
+        return self.__doValueSearch__(name)
 
     def set(self, property, data):
         self.__data[property] = data
@@ -160,7 +150,6 @@ class databasecontroller:
         #ost = str(data)
         #ost = ost[2:]
         #ost = ost[:len(ost)-1]
-        data = json.loads(data)
         for x in data:
             self.__docs[x] = databaseDocument({}, x)
             try:
@@ -168,7 +157,7 @@ class databasecontroller:
                     self.__docs[x].insertItem(y, data[x][y])
             except:
                 raise Exception(
-                    "Error generating itens for document: " + data[x])
+                    "Error generating items for document: " + data[x])
 
     def insertDocument(self, content, name):
         if(self.documentExists(name) == False):
@@ -197,7 +186,7 @@ class databasecontroller:
                 encrypted = enc_file.read()
             decrypted = fernet.decrypt(encrypted)
             if(decrypted):
-                
+
                 self.generateDocuments(decrypted.decode())
         except:
             raise Exception(

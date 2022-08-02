@@ -1,6 +1,6 @@
 from pylocaldatabase import pylocaldatabase
 
-dbcontroll = pylocaldatabase.databasecontroller(path="file.json")
+dbcontroll = pylocaldatabase.databasecontroller(path="file.json", isEncrypted=False)
 
 # trying to load file. if unable, creates the file.
 try:
