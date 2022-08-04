@@ -213,6 +213,7 @@ class databasecontroller:
         return obj.__dict__
 
     def documentExists(self, name) -> bool:
+        """Returns true if a databaseDocument object with given name is found"""
         try:
             data = self.__docs[name]
             return True
@@ -220,6 +221,7 @@ class databasecontroller:
             return False
 
     def getDocument(self, name: str) -> databaseDocument:
+        """Returns databaseDocument if an object with given name is found."""
         try:
             return self.__docs[name]
         except:
@@ -232,6 +234,7 @@ class databasecontroller:
             self.__encryptedpath = path
 
     def makeDatabase(self):
+        """Creates database file."""
         if self.__path == '':
             fs = open(self.__encryptedpath, "w+")
             fs.close()
@@ -240,9 +243,7 @@ class databasecontroller:
             fs.close()
 
     def generateDocuments(self, data):
-        #ost = str(data)
-        #ost = ost[2:]
-        #ost = ost[:len(ost)-1]
+        """Generates documents automatically when starting the database, if valid data is found on the file."""
         for x in data:
             self.__docs[x] = databaseDocument({}, x)
             try:
@@ -253,6 +254,7 @@ class databasecontroller:
                     "Error generating items for document: " + data[x])
 
     def insertDocument(self, content, name):
+        """Inserts object of type databaseDocumento on the databaseController, with given name and initial data."""
         if(self.documentExists(name) == False):
             data = {}
             for x in content:
@@ -263,6 +265,7 @@ class databasecontroller:
                             ". document already exists or content couldn't be appended to instances of Item.")
 
     def getWhere(self, field, value) -> databaseDocument:
+        """Returns the databaseDocument when a field with given value is found, eg:\n test@test.net at field email."""
         try:
             for x in self.__docs:
                 if(self.__docs[x].get()[field] == value):
@@ -271,6 +274,7 @@ class databasecontroller:
             return False
 
     def decryptLoad(self, keyPath):
+        """Loads an encrypted database file."""
         try:
             with open(keyPath, 'rb') as filekey:
                 key = filekey.read()
@@ -286,6 +290,7 @@ class databasecontroller:
                 "File not found or corrupted -> "+self.__encryptedpath)
 
     def load(self):
+        """Loads the database file."""
         try:
             fs = open(self.__path)
             data = json.loads(fs.read())
@@ -297,6 +302,7 @@ class databasecontroller:
                 "File not found or corrupted -> "+self.__path)
 
     def save_encrypted(self, keyPath):
+        """Save encrypted data. Can only be used when isEncrypted is set to true."""
         try:
             data = json.dumps(
                 self.__docs, default=databasecontroller.serialize).encode()
@@ -310,11 +316,13 @@ class databasecontroller:
             raise Exception("Error saving file -> "+self.__encryptedpath)
 
     def generateKey(self, keypath):
+        """Generates a criptographic key to be used when reading or writing the database file."""
         key = Fernet.generate_key()
         with open(keypath, 'wb') as filekey:
             filekey.write(key)
 
     def save(self):
+        """Saves database raw data as json on the database file."""
         try:
             fs = open(self.__path, "w+")
             fs.write(json.dumps(self.__docs, default=databasecontroller.serialize))
