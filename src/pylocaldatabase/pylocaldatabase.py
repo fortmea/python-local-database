@@ -92,12 +92,15 @@ $$$$$$$$$$$@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$(<<<+??-^$
 class item(object):
 
     def getName(self):
+        """Returns item name"""
         return self.__name
 
     def get(self):
+        """Returns item data"""
         return self.__data
 
     def setData(self, data):
+        """Overwrites all data in self"""
         self.__data = data
 
     def __init__(self, data, name):
@@ -105,17 +108,20 @@ class item(object):
         self.__name = name
 
     def insertProperty(self, name, value):
+        """Inserts a new property or overwrites a property with given name with value"""
         self.__data[name] = value
 
     def removeProperty(self, name):
+        """Removes given key from the item data"""
         self.__data.pop(name)
 
-    def hash(self):
+    def hash(self) -> hashlib.md5:
+        """Returns the md5 hash of self"""
         return databaseDocument.getHash(self)
 
 
 class databaseDocument(object):
-
+    
     def __dictKeysToList__(self, dict):
         _list = []
         for x in dict:
@@ -148,14 +154,13 @@ class databaseDocument(object):
         return value in self.__dictKeysToList__(self.__data)
 
     def __doValueSearch__(self, value):
-       # print (self.__dictToList__(self.__data))
         return value in self.__dictToList__(self.__data)
 
     def __init__(self, data, name):
         self.__data = data
         self.__name = name
 
-    def insertItem(self, name: str, data: dict):
+    def insertItem(self, name: str, data: dict) -> bool:
         """Inserts new item object in databaseDocument object, with given key and data"""
         self.__data[name] = item(data, name)
 
@@ -191,6 +196,7 @@ class databaseDocument(object):
             return False
 
     def getHash(self) -> hashlib.md5:
+        """Returns the md5 hash of self"""
         return hashlib.md5((str(json.dumps(self.get(), default=databasecontroller.serialize))).encode('utf-8')).hexdigest()
 
 
@@ -198,7 +204,8 @@ class databasecontroller:
     __path = ""
     __encryptedpath = ""
     __docs = {}
-
+    isEncrypted = False
+    keyPath = ""
     def serialize(obj):
         """JSON serializer for objects not serializable by default json code"""
 
@@ -275,6 +282,7 @@ class databasecontroller:
 
     def decryptLoad(self, keyPath):
         """Loads an encrypted database file."""
+        self.keyPath = keyPath
         try:
             with open(keyPath, 'rb') as filekey:
                 key = filekey.read()
@@ -301,31 +309,44 @@ class databasecontroller:
             raise Exception(
                 "File not found or corrupted -> "+self.__path)
 
-    def save_encrypted(self, keyPath):
-        """Save encrypted data. Can only be used when isEncrypted is set to true."""
-        try:
-            data = json.dumps(
-                self.__docs, default=databasecontroller.serialize).encode()
-            with open(keyPath, 'rb') as filekey:
-                key = filekey.read()
-            fernet = Fernet(key)
-            encrypted = fernet.encrypt(data)
-            with open(self.__encryptedpath, 'wb') as encrypted_file:
-                encrypted_file.write(encrypted)
-        except:
-            raise Exception("Error saving file -> "+self.__encryptedpath)
-
+    def save_encrypted(self):
+        """Encrypts and saves all data. Can only be used when isEncrypted is set to true."""
+        if(self.isEncrypted):
+            try:
+                data = json.dumps(
+                    self.__docs, default=databasecontroller.serialize).encode()
+                with open(self.keyPath, 'rb') as filekey:
+                    key = filekey.read()
+                fernet = Fernet(key)
+                encrypted = fernet.encrypt(data)
+                with open(self.__encryptedpath, 'wb') as encrypted_file:
+                    encrypted_file.write(encrypted)
+            except:
+                raise Exception("Error saving file -> "+self.__encryptedpath)
+    
     def generateKey(self, keypath):
-        """Generates a criptographic key to be used when reading or writing the database file."""
+        """Generates a cryptographic key to be used when reading or writing the database file."""
         key = Fernet.generate_key()
         with open(keypath, 'wb') as filekey:
             filekey.write(key)
-
     def save(self):
         """Saves database raw data as json on the database file."""
         try:
             fs = open(self.__path, "w+")
             fs.write(json.dumps(self.__docs, default=databasecontroller.serialize))
             fs.close()
-        except:
-            raise Exception("Error saving file -> "+self.__path)
+        except Exception as e:
+            raise Exception("Error saving file -> "+self.__path +"\n" +e)
+
+
+def slowWrite(dbcontroll: databasecontroller, docName: str, _item: item) -> bool:
+    doc = dbcontroll.getDocument(docName)
+    if(doc != False):
+        doc.insertItem(_item.getName(), _item.get() )
+    else:
+        dbcontroll.insertDocument(name=docName)
+        dbcontroll.getDocument(docName).insertItem(_item.getName(), _item.get())
+    if(dbcontroll.isEncrypted): dbcontroll.save_encrypted(dbcontroll.keyPath)
+    else: dbcontroll.save()
+    del dbcontroll
+    return True
