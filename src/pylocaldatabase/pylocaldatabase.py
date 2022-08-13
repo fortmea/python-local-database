@@ -339,13 +339,13 @@ class databasecontroller:
             raise Exception("Error saving file -> "+self.__path +"\n" +e)
 
 
-def slowWrite(dbcontroll: databasecontroller, docName: str, _item: item) -> bool:
+def slowWrite(dbcontroll: databasecontroller, docName: str, nItem: item) -> bool:
     doc = dbcontroll.getDocument(docName)
     if(doc != False):
-        doc.insertItem(_item.getName(), _item.get() )
+        doc.insertItem(nItem.getName(), nItem.get() )
     else:
         dbcontroll.insertDocument(name=docName)
-        dbcontroll.getDocument(docName).insertItem(_item.getName(), _item.get())
+        dbcontroll.getDocument(docName).insertItem(nItem.getName(), nItem.get())
     if(dbcontroll.isEncrypted): dbcontroll.save_encrypted(dbcontroll.keyPath)
     else: dbcontroll.save()
     del dbcontroll
