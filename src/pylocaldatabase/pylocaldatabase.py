@@ -91,11 +91,11 @@ $$$$$$$$$$$@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$(<<<+??-^$
 
 class item(object):
 
-    def getName(self):
+    def getName(self) -> str:
         """Returns item name"""
         return self.__name
 
-    def get(self):
+    def get(self) -> dict:
         """Returns item data"""
         return self.__data
 
@@ -164,7 +164,7 @@ class databaseDocument(object):
         """Inserts new item object in databaseDocument object, with given key and data"""
         self.__data[name] = item(data, name)
 
-    def getName(self):
+    def getName(self) -> str:
         """Returns databaseDocument key"""
         return self.__name
 
@@ -184,7 +184,7 @@ class databaseDocument(object):
         """Removes property by key"""
         self.__data.pop(property)
 
-    def get(self) -> dict:
+    def get(self) -> dict[str, item]:
         """Returns the contents of the databaseDocument"""
         return self.__data
 

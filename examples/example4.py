@@ -18,6 +18,11 @@ documentos = dbcontroll.getDocuments()
 print(len(documentos))
 
 for documento in documentos:
-    print(documento.)
+    print(documento)
+    doc = documentos[documento].get()
+    for item in doc:
+        print(doc[item].get())
+
+
 
 dbcontroll.save()
