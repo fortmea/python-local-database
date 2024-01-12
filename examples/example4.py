@@ -2,12 +2,13 @@ from pydoc import doc
 from pylocaldatabase import pylocaldatabase
 
 dbcontroll = pylocaldatabase.databasecontroller(path="file.json", isEncrypted=False)
-
+pylocaldatabase.logo()
 # trying to load file. if unable, creates the file.
 try:
     dbcontroll.load()
 except:
     dbcontroll.makeDatabase()
+
 
 # creates document if not present
 if(dbcontroll.documentExists("Documento")!=True):

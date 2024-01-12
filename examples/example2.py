@@ -27,4 +27,4 @@ document.insertItem("Color", "Deep purple")
 print(document.getItem("Color").get())
 
 #saving the contents in a encrypted file
-dbcontroll.save_encrypted(keypath)
+dbcontroll.save_encrypted()
