@@ -206,6 +206,11 @@ class databasecontroller:
     __docs = {}
     isEncrypted = False
     keyPath = ""
+    
+    def getDocuments(self) -> dict[str, databaseDocument]:
+        """Returns all documents in databaseController"""
+        return self.__docs
+    
     def serialize(obj):
         """JSON serializer for objects not serializable by default json code"""
 
