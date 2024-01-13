@@ -131,7 +131,7 @@ class databasecontroller:
     isEncrypted = False
     keyPath = ""
     
-    def getDocuments(self) -> dict[str, databaseDocument]:
+    def getDocuments(self) -> dict:
         """Returns all documents in databaseController"""
         return self.__docs
     
@@ -160,6 +160,14 @@ class databasecontroller:
         """Returns databaseDocument if an object with given name is found."""
         try:
             return self.__docs[name]
+        except:
+            return False
+        
+    def deleteDocument(self, name: str) -> bool:
+        """Deletes document with given name"""
+        try:
+            self.__docs.pop(name)
+            return True
         except:
             return False
 
@@ -261,11 +269,6 @@ class databasecontroller:
             filekey.write(key)
             filekey.close()
             
-    def generateCustomKey(self, keypath, key):
-        """Generates a custom cryptographic key to be used when reading or writing the database file."""
-        with open(keypath, 'wb') as filekey:
-            filekey.write(key)
-            filekey.close()
     def save(self):
         """Saves database raw data as json on the database file."""
         try:
